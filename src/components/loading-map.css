@@ -1,0 +1,64 @@
+.loading-screen {
+  background: whitesmoke;
+  border-bottom: 5px solid #d9b08c;
+}
+
+.loading-text {
+  margin-top: 50%;
+  color: #116466;
+  display: inline-block;
+}
+
+#first-dot {
+  animation-name: first;
+  animation-duration: 4s;
+  animation-iteration-count: infinite;
+}
+
+#second-dot {
+  animation-name: second;
+  animation-duration: 4s;
+  animation-iteration-count: infinite;
+}
+
+#third-dot {
+  animation-name: third;
+  animation-duration: 4s;
+  animation-iteration-count: infinite;
+}
+
+@keyframes first {
+  0% {
+    opacity: 0;
+  }
+  24% {
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+  }
+}
+
+@keyframes second {
+  0% {
+    opacity: 0;
+  }
+  49% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes third {
+  0% {
+    opacity: 0;
+  }
+  74% {
+    opacity: 0;
+  }
+  75% {
+    opacity: 1;
+  }
+}

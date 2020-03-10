@@ -3,8 +3,8 @@ import "./App.css";
 import MeteoriteTable from "./meteorite-table";
 import { Doughnut } from "react-chartjs-2";
 import { formatDataFromSizes } from "./utils/utils";
-import { Map, Marker, Popup, TileLayer } from "react-leaflet";
-import { Icon } from "leaflet";
+import CentralMap from "./components/map";
+import MapLoading from "./components/loading-map";
 
 class App extends React.Component {
   state = {
@@ -28,12 +28,14 @@ class App extends React.Component {
   };
 
   componentDidMount() {
-    fetch("https://data.nasa.gov/resource/gh4g-9sfh.json")
+    fetch(
+      "https://data.nasa.gov/resource/gh4g-9sfh.json?$order=mass%20desc&$where=mass > 0"
+    )
       .then(response => {
         return response.json();
       })
       .then(data => {
-        const tableData = data.map(meteorite => {
+        const tableData = data.slice(0, 200).map(meteorite => {
           const meteoriteCopy = { ...meteorite };
           if (meteoriteCopy.geolocation === undefined) {
             meteoriteCopy.geolocation = {
@@ -68,56 +70,20 @@ class App extends React.Component {
     const { meteorites, testDataset, activeMeteorite, isLoading } = this.state;
     return (
       <div className="App">
-        <div>
-          <h1>Meteorite Landings</h1>
-          {isLoading === false ? (
-            <MeteoriteTable meteorites={meteorites} />
-          ) : (
-            <p>...loading...</p>
-          )}
-          <Doughnut data={testDataset} />
-        </div>
-        <Map center={[0.0, 0.0]} zoom={2}>
-          <TileLayer
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            attribution='&copy; <a href="https://osm.org.copyright">OpenStreetMap</a> contributors'
+        {isLoading ? (
+          <MapLoading />
+        ) : (
+          <CentralMap
+            meteorites={meteorites}
+            activeMeteorite={activeMeteorite}
+            showMeteoriteData={this.showMeteoriteData}
           />
-          {meteorites.map(meteorite => {
-            return meteorite.geolocation.latitude !== "unknown" ? (
-              <Marker
-                key={meteorite.id}
-                position={[
-                  meteorite.geolocation.latitude,
-                  meteorite.geolocation.longitude
-                ]}
-                onClick={() => {
-                  this.showMeteoriteData(meteorite);
-                }}
-              ></Marker>
-            ) : null;
-          })}
-          {activeMeteorite && (
-            <Popup
-              position={[
-                activeMeteorite.geolocation.latitude,
-                activeMeteorite.geolocation.longitude
-              ]}
-              onClose={() => {
-                this.showMeteoriteData(null);
-              }}
-            >
-              <div id="popup-info">
-                <h3>{activeMeteorite.name}</h3>
-                <p id="popup-info">Mass: {activeMeteorite.mass} grams</p>
-                <p id="popup-info">
-                  Geolocation: {activeMeteorite.geolocation.latitude},{" "}
-                  {activeMeteorite.geolocation.longitude}
-                </p>
-                <p id="popup-info">Year: {activeMeteorite.year}</p>
-              </div>
-            </Popup>
-          )}
-        </Map>
+        )}
+        <p>placeholder</p>
+        <div className="title">
+          <h1>Meteorite Map</h1>
+          <p>A react app for plotting meteorites</p>
+        </div>
       </div>
     );
   }
